@@ -89,7 +89,7 @@ void update_candidates(candidate*** cands){
 	fitval totalf;
 	fitval picknum;
 
-	newcands = malloc(sizeof(candidate) * n); //array of new candidates
+	newcands = malloc(sizeof(candidate *) * n); //array of new candidates
 	totalf = 0;
 
 	for(i = 0; i < n; i++)
