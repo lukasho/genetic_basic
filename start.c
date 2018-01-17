@@ -166,9 +166,6 @@ candidate* run(){
 	return best_candidate;
 }
 
-
-
-
 int main(int argc, char** argv){
 	
 	if(argc!=9 || !argv)
