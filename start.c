@@ -5,11 +5,6 @@ int g; //number of generations
 int p; //chance a given contender will point mutate each generation / 1 million
 int c; //chance two contenders cross in a given generation / 1 million
 
-pthread_mutex_t pauser;
-candidate* noob;
-
-int fightpipe[2];
-
 void failwith(char* msg){
 	fprintf(stderr, "Error: %s. errno %d\n", msg, errno);
 	exit(0);
@@ -17,13 +12,6 @@ void failwith(char* msg){
 
 unsigned char randchar(){
 	return rand() % 256;
-}
-
-unsigned char randletter(){
-	unsigned int roll = rand() % 52;
-	unsigned int base = (roll/26 > 0)?97:65;
-	unsigned char ret = base + roll%26;
-	return ret;
 }
 
 void printinfo(candidate* cand){
@@ -41,10 +29,9 @@ candidate* init_cand(){
 	ret->info = malloc(sizeof(unsigned char) * (INFOLEN + 1));
 
 	for(i = 0; i < INFOLEN; i++)
-		ret->info[i] = randchar();//i<7?randletter():randchar();
+		ret->info[i] = randchar();
 
 	ret->fitness = fitness(ret);
-	//printinfo(ret);
 	return ret;
 }
 
@@ -140,8 +127,6 @@ candidate* run(){
 	
 	for(i = 0; i < n; i++)
 		cands[i] = init_cand();
-
-
 	
 	//g generations
 	for(i = 0; i < g; i++){
@@ -156,7 +141,6 @@ candidate* run(){
 			done = 0;
 		}
 
-		pthread_mutex_unlock(&pauser);
 	}
 	fprintf(stderr, "\n\n");
 	
@@ -187,15 +171,8 @@ candidate* run(){
 
 int main(int argc, char** argv){
 	
-	noob = NULL;
-	//int i;
 	if(argc!=9 || !argv)
 		failwith("Arguments: -n [num] -g [gen] -p [point] -c [cross]");
-
-	pthread_mutex_t tmp = PTHREAD_MUTEX_INITIALIZER;
-	pauser = tmp;
-	if(pipe(fightpipe) < 0)
-		failwith("pipe");
 
 	srand(time(NULL));
 
@@ -204,9 +181,5 @@ int main(int argc, char** argv){
 	p = atoi(argv[6]);
 	c = atoi(argv[8]);
 
-	//pthread_t threads[NUM_THREADS];
-
 	run();
-	//pthread_join(noob_thread, NULL);
-	pthread_exit(NULL);
 }
